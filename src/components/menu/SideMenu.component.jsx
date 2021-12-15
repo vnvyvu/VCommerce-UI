@@ -1,7 +1,6 @@
 import { Drawer as MuiDrawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip as MuiTooltip, tooltipClasses } from '@mui/material';
 import { styled } from '@mui/system';
 import { AnimatePresence } from 'framer-motion';
-import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MotionBox } from '../motion/Motion.component';
 
@@ -113,12 +112,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
     )
 )
 
-export function SideMenu({ items, onControlDrawer }) {
-    const [open, setOpen] = useState(false);
-    const handleController = useCallback(() => {
+export function SideMenu({ items, open, onControlDrawer }) {
+    const handleController = () => {
         onControlDrawer(!open);
-        setOpen(!open);
-    }, [open, onControlDrawer])
+    }
     return (
         <Drawer
             open={open}
