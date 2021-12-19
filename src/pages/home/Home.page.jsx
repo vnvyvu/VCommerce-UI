@@ -1,6 +1,7 @@
-import { Box, createTheme, ScopedCssBaseline, ThemeProvider } from '@mui/material';
+import { Box, createTheme } from '@mui/material';
 import React from 'react';
 import { Progress } from '../../components/progress/Progress.component';
+import { ScopedTheme } from '../../components/theme/ScopedTheme.component';
 import First from './First.page';
 import Four from './Four.page';
 import Second from './Second.page';
@@ -18,29 +19,19 @@ function Home({ drawerWidth }) {
             }}
         >
             <Progress />
-            <ScopedThemeProvider theme={dark}>
+            <ScopedTheme theme={dark}>
                 <First />
-            </ScopedThemeProvider>
-            <ScopedThemeProvider theme={light}>
+            </ScopedTheme>
+            <ScopedTheme theme={light}>
                 <Second />
-            </ScopedThemeProvider>
-            <ScopedThemeProvider theme={light}>
+            </ScopedTheme>
+            <ScopedTheme theme={light}>
                 <Third />
-            </ScopedThemeProvider>
-            <ScopedThemeProvider theme={dark}>
+            </ScopedTheme>
+            <ScopedTheme theme={dark}>
                 <Four />
-            </ScopedThemeProvider>
+            </ScopedTheme>
         </Box >
-    );
-}
-
-function ScopedThemeProvider({ theme, children }) {
-    return (
-        <ThemeProvider theme={theme}>
-            <ScopedCssBaseline>
-                {children}
-            </ScopedCssBaseline>
-        </ThemeProvider>
     );
 }
 

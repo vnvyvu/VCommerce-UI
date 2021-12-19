@@ -27,45 +27,45 @@ function Router() {
             <CssBaseline enableColorScheme />
             <BrowserRouter>
                 <SideMenu
-                    items={(navigate) => [
+                    items={[
                         {
                             key: "home",
                             icon: <i className="far fa-home"></i>,
                             text: "Home",
-                            onClick: () => navigate('/')
+                            to: '/'
                         },
                         {
                             key: "store",
                             icon: <i className="far fa-store"></i>,
                             text: "Store",
-                            onClick: () => navigate('/store')
+                            to: '/store'
                         },
                         {
                             key: "contact",
                             icon: <i className="far fa-briefcase"></i>,
                             text: "Contact",
-                            onClick: () => navigate('/contact')
+                            to: '/contact'
                         },
                         {
                             key: "about",
                             icon: <i className="far fa-users"></i>,
                             text: "About",
-                            onClick: () => navigate('/about')
+                            to: '/about'
                         },
                         {
                             key: "register",
-                            icon: <i className="far fa-sticky-note"></i>,
+                            icon: <i className="far fa-pen-square"></i>,
                             text: "Register",
                             sx: {
                                 mt: 'auto'
                             },
-                            onClick: () => navigate('/register')
+                            to: '/register'
                         },
                         {
                             key: "login",
-                            icon: <i className="far fa-sign-in-alt"></i>,
+                            icon: <i className="far fa-user"></i>,
                             text: "Login",
-                            onClick: () => navigate('/login')
+                            to: '/login'
                         },
                     ]}
                     open={drawer.open}
@@ -78,11 +78,11 @@ function Router() {
                     />
                     <Route
                         path="/login"
-                        element={<Login />}
+                        element={<Login drawerWidth={drawer.width} />}
                     />
                     <Route
                         path="/register"
-                        element={<Register />}
+                        element={<Register drawerWidth={drawer.width} drawerOpen={drawer.open} />}
                     />
                 </Routes>
             </BrowserRouter>
