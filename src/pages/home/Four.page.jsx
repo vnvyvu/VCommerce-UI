@@ -223,7 +223,7 @@ function Middle() {
                         required
                         label="Type your question..."
                         multiline
-                        rows={8}
+                        minRows={8}
                         maxRows={12}
                         sx={{
                             width: 1

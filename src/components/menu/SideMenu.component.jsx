@@ -1,9 +1,9 @@
-import { Drawer as MuiDrawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip as MuiTooltip, tooltipClasses } from '@mui/material';
+import { Drawer as MuiDrawer, IconButton, ListItemButton, ListItemIcon, ListItemText, Tooltip as MuiTooltip, tooltipClasses } from '@mui/material';
 import { styled } from '@mui/system';
-import { AnimatePresence } from 'framer-motion';
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MotionBox } from '../motion/Motion.component';
+import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
+import { memo } from 'react';
+import { Link } from 'react-router-dom';
+import { MotionBox, MotionList, MotionListItem } from '../motion/Motion.component';
 
 const Tooltip = styled(({ className, ...props }) =>
     <MuiTooltip {...props} classes={{ popper: className }} />,
@@ -40,13 +40,12 @@ function SideMenuTop({ src, open, ...params }) {
 }
 
 function SideMenuItems({ open, items }) {
-    const navigate = useNavigate();
     return (
-        <List sx={{ height: 1, overflowY: 'scroll', display: 'flex', flexFlow: 'column' }}>
-            {(items(navigate) || []).map(({ icon, text, sx, key, ...itemParams }) =>
+        <MotionList layout sx={{ height: 1, overflowY: 'scroll', display: 'flex', flexFlow: 'column' }}>
+            {items.map(({ icon, text, sx, key, to }) =>
                 <Tooltip title={text} placement="right" arrow key={key}>
-                    <ListItem disablePadding sx={{ width: 1, ...sx }} {...itemParams}>
-                        <ListItemButton disableGutters={!open} sx={open ? {} : { justifyContent: 'center' }}>
+                    <MotionListItem layout disablePadding sx={{ width: 1, ...sx }}>
+                        <ListItemButton disableGutters={!open} component={Link} sx={open ? {} : { justifyContent: 'center' }} to={to}>
                             <ListItemIcon
                                 sx={{
                                     justifyContent: 'center',
@@ -61,11 +60,11 @@ function SideMenuItems({ open, items }) {
                                 {text}
                             </ListItemText>}
                         </ListItemButton>
-                    </ListItem>
+                    </MotionListItem>
                 </Tooltip>
             )
             }
-        </List >
+        </MotionList >
     );
 }
 
@@ -113,12 +112,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
     )
 )
 
-export function SideMenu({ items, onControlDrawer }) {
-    const [open, setOpen] = useState(false);
-    const handleController = useCallback(() => {
+export const SideMenu = memo(({ items, open, onControlDrawer }) => {
+    const handleController = () => {
         onControlDrawer(!open);
-        setOpen(!open);
-    }, [open, onControlDrawer])
+    }
     return (
         <Drawer
             open={open}
@@ -128,11 +125,12 @@ export function SideMenu({ items, onControlDrawer }) {
                 src={process.env.PUBLIC_URL + (open ? "/logo.png" : "/favicon.png")}
                 open={open}
             />
-
-            <SideMenuItems
-                items={items}
-                open={open}
-            />
+            <AnimateSharedLayout>
+                <SideMenuItems
+                    items={items}
+                    open={open}
+                />
+            </AnimateSharedLayout>
 
             <SideMenuController
                 onClick={handleController}
@@ -140,6 +138,4 @@ export function SideMenu({ items, onControlDrawer }) {
             />
         </Drawer>
     );
-}
-
-
+});

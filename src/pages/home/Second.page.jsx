@@ -2,11 +2,12 @@ import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useRef } from 'react';
 import SwiperCore, { Autoplay, Mousewheel, Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
-import 'swiper/swiper-bundle.min.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import { FrameMotionBox, MotionInView } from "../../components/motion/Motion.component";
 function Second() {
     return (
+
         <MotionInView
             style={{
                 height: '50vh',

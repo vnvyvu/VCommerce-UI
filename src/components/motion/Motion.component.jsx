@@ -1,5 +1,5 @@
-import { Box, Grid, Stack } from '@mui/material';
-import { motion, useAnimation } from "framer-motion";
+import { Box, Grid, List, ListItem, Stack } from '@mui/material';
+import { isValidMotionProp, motion, useAnimation } from "framer-motion";
 import { forwardRef, useEffect, useRef } from "react";
 import { useInView } from 'react-intersection-observer';
 
@@ -32,18 +32,19 @@ export function MotionInView(params) {
     );
 }
 
-export function FrameMotionBox({ from = {}, to = {}, transitions = [], ...params }) {
+export function FrameMotionBox({ from = {}, to = {}, transitions = [], withoutMotionInView = false, ...params }) {
     from = Object.assign(from, { transition: transitions[0] || {} });
     to = Object.assign(to, { transition: transitions[1] || transitions[0] || {} });
     return (
         <MotionBox
+            {...(withoutMotionInView && { initial: "from", animate: "to" })}
             variants={{ from, to }}
             {...params}
         />
     );
 }
 
-export const MotionBox = motion(forwardRef((props, ref) => <Box ref={ref} {...props} />), { forwardMotionProps: true });
+export const MotionBox = motion(forwardRef((props, ref) => <Box ref={ref} {...props} />), { forwardMotionProps: (prop) => isValidMotionProp(prop) });
 
 export function FrameMotionStack({ from = {}, to = {}, transitions = [], ...params }) {
     from = Object.assign(from, { transition: transitions[0] || {} });
@@ -55,7 +56,7 @@ export function FrameMotionStack({ from = {}, to = {}, transitions = [], ...para
         />
     );
 }
-export const MotionStack = motion(forwardRef((props, ref) => <Stack ref={ref} {...props} />), { forwardMotionProps: true });
+export const MotionStack = motion(forwardRef((props, ref) => <Stack ref={ref} {...props} />), { forwardMotionProps: (prop) => isValidMotionProp(prop) });
 
 export function FrameMotionGrid({ from = {}, to = {}, transitions = [], ...params }) {
     from = Object.assign(from, { transition: transitions[0] || {} });
@@ -67,4 +68,7 @@ export function FrameMotionGrid({ from = {}, to = {}, transitions = [], ...param
         />
     );
 }
-export const MotionGrid = motion(forwardRef((props, ref) => <Grid ref={ref} {...props} />), { forwardMotionProps: true });
+export const MotionGrid = motion(forwardRef((props, ref) => <Grid ref={ref} {...props} />), { forwardMotionProps: (prop) => isValidMotionProp(prop) });
+
+export const MotionList = motion(forwardRef((props, ref) => <List ref={ref} {...props} />), { forwardMotionProps: (prop) => isValidMotionProp(prop) });
+export const MotionListItem = motion(forwardRef((props, ref) => <ListItem ref={ref} {...props} />), { forwardMotionProps: (prop) => isValidMotionProp(prop) });
