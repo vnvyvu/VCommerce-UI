@@ -1,5 +1,6 @@
-import { Box, createTheme } from '@mui/material';
+import { createTheme } from '@mui/material';
 import React from 'react';
+import { MotionBox } from '../../components/motion/Motion.component';
 import { Progress } from '../../components/progress/Progress.component';
 import { ScopedTheme } from '../../components/theme/ScopedTheme.component';
 import First from './First.page';
@@ -12,10 +13,14 @@ const light = createTheme({ palette: { mode: 'light' } });
 
 function Home({ drawerWidth }) {
     return (
-        <Box
+        <MotionBox
             sx={{
                 ml: drawerWidth + "px",
-                transition: "all 0.2s",
+            }}
+            layout
+            transition={{
+                duration: 0.2,
+                type: 'tween'
             }}
         >
             <Progress />
@@ -31,7 +36,7 @@ function Home({ drawerWidth }) {
             <ScopedTheme theme={dark}>
                 <Four />
             </ScopedTheme>
-        </Box >
+        </MotionBox >
     );
 }
 

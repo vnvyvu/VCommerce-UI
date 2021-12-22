@@ -1,15 +1,15 @@
 import { IconButton, InputAdornment, TextField } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
 
-export function InputPassword({ disableValidator = false, repassword = false, ...params }) {
-    const [status, setStatus] = useState({ value: '', helperText: '' });
+export function InputPassword({ disableValidator = false, repassword = false, context, actionUpdate, ...params }) {
+    const { data: { password: { value, helperText } }, dispatch } = useContext(context);
     const fieldRef = useRef(null);
     const handleTyping = (e) => {
         (!disableValidator && e.target.value) ?
             e.target.value.match(/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,})/g) ?
-                setStatus({ value: e.target.value, helperText: '' }) :
-                setStatus({ value: e.target.value, helperText: 'Password must be at least 8 characters, include at least 1 special, 1 lowercase, 1 uppercase' }) :
-            setStatus(prev => ({ ...prev, value: e.target.value }))
+                dispatch(actionUpdate('password', e.target.value, '')) :
+                dispatch(actionUpdate('password', e.target.value, 'Password must be at least 8 characters, include at least 1 special, 1 lowercase, 1 uppercase')) :
+            dispatch(actionUpdate('password', e.target.value, helperText));
     }
 
     return (
@@ -17,21 +17,22 @@ export function InputPassword({ disableValidator = false, repassword = false, ..
             <TextField
                 label="Password"
                 required
-                {...status}
-                error={Boolean(status.helperText)}
+                helperText={helperText}
+                error={Boolean(helperText)}
                 inputRef={fieldRef}
-                onChange={handleTyping}
+                onBlur={handleTyping}
                 type='password'
                 InputProps={{
                     endAdornment: <InputAdornment position='end'>
-                        {status.helperText && <IconButton
+                        {helperText && <IconButton
                             size='small'
                             sx={{
                                 color: 'error.light'
                             }}
                             onClick={() => {
+                                fieldRef.current.value = '';
                                 fieldRef.current.focus();
-                                setStatus({ value: '', helperText: '' });
+                                dispatch(actionUpdate('password', '', ''));
                             }}
                             edge="end"
                         >
@@ -41,25 +42,25 @@ export function InputPassword({ disableValidator = false, repassword = false, ..
                 }}
                 {...params}
             />
-            {repassword && <InputRepassword password={status.value} {...params} />}
+            {repassword && <InputRepassword password={value} context={context} actionUpdate={actionUpdate} {...params} />}
         </>
     );
 }
 
-function InputRepassword({ password, ...params }) {
-    const [status, setStatus] = useState({ value: '', helperText: '' });
+function InputRepassword({ password, context, actionUpdate, ...params }) {
+    const { data: { repassword: { helperText } }, dispatch } = useContext(context);
     const handleTyping = (e) => {
         password && e.target.value !== password ?
-            setStatus({ value: e.target.value, helperText: 'Password not match' }) :
-            setStatus({ value: e.target.value, helperText: '' })
+            dispatch(actionUpdate('repassword', e.target.value, 'Password not match')) :
+            dispatch(actionUpdate('repassword', e.target.value, ''));
     }
     return (
         <TextField
             label="Re-password"
             required
-            {...status}
-            error={Boolean(status.helperText)}
-            onChange={handleTyping}
+            helperText={helperText}
+            error={Boolean(helperText)}
+            onBlur={handleTyping}
             type='password'
             {...params}
         />

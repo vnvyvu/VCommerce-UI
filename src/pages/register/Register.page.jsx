@@ -1,14 +1,15 @@
 import { Button, Checkbox, Divider, FormControlLabel, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { InputEmail } from '../../components/input/InputEmail.component';
 import { InputName } from '../../components/input/InputName.component';
 import { InputPassword } from '../../components/input/InputPassword.component';
-import { FrameMotionBox } from '../../components/motion/Motion.component';
+import { FrameMotionBox, MotionBox } from '../../components/motion/Motion.component';
+import { createActionUpdate, RegisterContext, RegisterProvider } from './Register.context';
 
 function Register({ drawerWidth, drawerOpen }) {
     const [agreeTerms, setAgreeTerms] = useState(false);
     return (
-        <FrameMotionBox
+        <MotionBox
             sx={{
                 display: 'flex',
                 flexFlow: 'row wrap',
@@ -23,13 +24,21 @@ function Register({ drawerWidth, drawerOpen }) {
                 backgroundRepeat: 'no-repeat',
                 mixBlendMode: 'darken',
                 overflowY: 'scroll',
-                overflowX: 'hidden'
+                overflowX: 'hidden',
             }}
             layout
+            transition={{
+                duration: 0.2,
+                type: 'tween'
+            }}
         >
             <Top drawerOpen={drawerOpen} onAgreeTerms={(e) => setAgreeTerms(e.target.checked)} />
-            {agreeTerms && <Middle drawerOpen={drawerOpen} />}
-        </FrameMotionBox >
+            {agreeTerms &&
+                <RegisterProvider>
+                    <Middle drawerOpen={drawerOpen} />
+                </RegisterProvider>
+            }
+        </MotionBox >
     );
 }
 
@@ -48,6 +57,17 @@ function Top({ drawerOpen, onAgreeTerms }) {
                 p: 4
             }}
             layout
+            transition={{
+                duration: 0.2,
+                type: 'tween'
+            }}
+            from={{
+                opacity: 0
+            }}
+            to={{
+                opacity: 1
+            }}
+            withoutMotionInView
         >
             <Typography
                 variant='h4'
@@ -81,7 +101,7 @@ function Top({ drawerOpen, onAgreeTerms }) {
                 <Term />
             </Typography>
             <FormControlLabel
-                label={<Typography component="span" variant='body2' sx={{ mt: 0.3 }}>I have read and agree to the above terms and conditions</Typography>}
+                label={<Typography component="span" variant='body2' sx={{ lineHeight: 'normal' }}>I have read and agree to the above terms and conditions</Typography>}
                 control={
                     <Checkbox onChange={onAgreeTerms} />
                 }
@@ -129,20 +149,32 @@ function Middle({ drawerOpen }) {
             >
                 Register
             </Typography>
-            <InputName fullWidth />
-            <InputEmail fullWidth />
-            <InputPassword fullWidth repassword />
-            <Button
-                type='submit'
-                variant='contained'
-                color='secondary'
-                sx={{
-                    height: '2rem',
-                    px: 8,
-                    py: 2.2
-                }}
-            >Submit</Button>
+            <InputName fullWidth context={RegisterContext} actionUpdate={createActionUpdate} />
+            <InputEmail fullWidth context={RegisterContext} actionUpdate={createActionUpdate} />
+            <InputPassword fullWidth repassword context={RegisterContext} actionUpdate={createActionUpdate} />
+            <ButtonRegister />
         </FrameMotionBox>
+    );
+}
+
+function ButtonRegister() {
+    const { data } = useContext(RegisterContext);
+    const handleSubmitRegister = (e) => {
+        e.preventDefault();
+        console.log(data);
+    }
+    return (
+        <Button
+            type='submit'
+            variant='contained'
+            color='secondary'
+            sx={{
+                height: '2rem',
+                px: 10,
+                py: 2.5,
+            }}
+            onClick={handleSubmitRegister}
+        >Submit</Button>
     );
 }
 

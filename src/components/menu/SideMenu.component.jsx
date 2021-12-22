@@ -1,9 +1,9 @@
-import { Drawer as MuiDrawer, IconButton, ListItemButton, ListItemIcon, ListItemText, Tooltip as MuiTooltip, tooltipClasses } from '@mui/material';
+import { Drawer as MuiDrawer, drawerClasses, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip as MuiTooltip, tooltipClasses } from '@mui/material';
 import { styled } from '@mui/system';
 import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { MotionBox, MotionList, MotionListItem } from '../motion/Motion.component';
+import { MotionBox, MotionList } from '../motion/Motion.component';
 
 const Tooltip = styled(({ className, ...props }) =>
     <MuiTooltip {...props} classes={{ popper: className }} />,
@@ -44,8 +44,8 @@ function SideMenuItems({ open, items }) {
         <MotionList layout sx={{ height: 1, overflowY: 'scroll', display: 'flex', flexFlow: 'column' }}>
             {items.map(({ icon, text, sx, key, to }) =>
                 <Tooltip title={text} placement="right" arrow key={key}>
-                    <MotionListItem layout disablePadding sx={{ width: 1, ...sx }}>
-                        <ListItemButton disableGutters={!open} component={Link} sx={open ? {} : { justifyContent: 'center' }} to={to}>
+                    <ListItem disablePadding sx={{ width: 1, height: '3rem', ...sx }}>
+                        <ListItemButton disableGutters component={Link} sx={open ? {} : { justifyContent: 'center' }} to={to}>
                             <ListItemIcon
                                 sx={{
                                     justifyContent: 'center',
@@ -56,11 +56,12 @@ function SideMenuItems({ open, items }) {
                             </ListItemIcon>
                             {open && <ListItemText
                                 disableTypography
+                                sx={{ lineHeight: 'normal' }}
                             >
                                 {text}
                             </ListItemText>}
                         </ListItemButton>
-                    </MotionListItem>
+                    </ListItem>
                 </Tooltip>
             )
             }
@@ -120,6 +121,11 @@ export const SideMenu = memo(({ items, open, onControlDrawer }) => {
         <Drawer
             open={open}
             variant='permanent'
+            sx={{
+                ['& .' + drawerClasses.paper]: {
+                    borderRight: 'none'
+                }
+            }}
         >
             <SideMenuTop
                 src={process.env.PUBLIC_URL + (open ? "/logo.png" : "/favicon.png")}

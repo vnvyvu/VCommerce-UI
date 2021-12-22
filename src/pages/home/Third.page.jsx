@@ -85,7 +85,7 @@ function Middle() {
                     opacity: 0
                 },
                 transitions: [{
-                    delay: 1,
+                    delay: 0.5,
                     duration: 1,
                     type: 'tween'
                 }],
@@ -105,7 +105,7 @@ function Middle() {
                     opacity: 0
                 },
                 transitions: [{
-                    delay: 0.5,
+                    delay: 0.25,
                     duration: 1,
                     type: 'tween'
                 }],
@@ -125,7 +125,7 @@ function Middle() {
                     opacity: 0
                 },
                 transitions: [{
-                    delay: 1,
+                    delay: 0.5,
                     duration: 1,
                     type: 'tween'
                 }],

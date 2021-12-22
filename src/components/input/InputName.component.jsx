@@ -1,48 +1,49 @@
 import { IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
+import { RegisterContext } from '../../pages/register/Register.context';
 
-export function InputName(params) {
-    const [gender, setGender] = useState('Mr');
-    const [status, setStatus] = useState({ value: '', helperText: '' });
+export function InputName({ context, actionUpdate, ...params }) {
+    const { data: { gender, name: { helperText } }, dispatch } = useContext(RegisterContext);
     const fieldRef = useRef(null);
     const handleTyping = (e) => {
         e.target.value ?
             e.target.value.match(/\w+( \w+)+$/) ?
-                setStatus({ value: e.target.value, helperText: '' }) :
-                setStatus({ value: e.target.value, helperText: 'Please enter your full name' }) :
-            setStatus(prev => ({ ...prev, value: e.target.value }))
+                dispatch(actionUpdate('name', e.target.value, '')) :
+                dispatch(actionUpdate('name', e.target.value, 'Please enter your full name')) :
+            dispatch(actionUpdate('name', e.target.value, helperText));
     }
     return (
         <TextField
             label="Full name"
             required
-            {...status}
-            error={Boolean(status.helperText)}
+            helperText={helperText}
+            error={Boolean(helperText)}
             inputRef={fieldRef}
-            onChange={handleTyping}
+            onBlur={handleTyping}
             InputProps={{
                 startAdornment: <InputAdornment position='start'>
                     <Select
-                        value={gender}
+                        value={gender.value}
                         onChange={(e) => {
-                            setGender(e.target.value);
+                            dispatch(actionUpdate('gender', e.target.value));
                         }}
                         variant='standard'
                         disableUnderline
                     >
                         <MenuItem value="Mr">Mr.</MenuItem>
-                        <MenuItem value="Mrs">Mrs.</MenuItem>
+                        <MenuItem value="Ms">Ms.</MenuItem>
                     </Select>
                 </InputAdornment>,
-                endAdornment: status.helperText && <InputAdornment position='end'>
+                endAdornment: helperText && <InputAdornment position='end'>
                     <IconButton
                         size='small'
                         sx={{
                             color: 'error.light'
                         }}
                         onClick={() => {
+                            fieldRef.current.value = '';
                             fieldRef.current.focus();
-                            setStatus({ value: '', helperText: '' });
+                            dispatch(actionUpdate('name', '', ''));
                         }}
                         edge="end"
                     >
