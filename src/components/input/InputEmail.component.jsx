@@ -1,42 +1,52 @@
 import { IconButton, InputAdornment, TextField } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-export function InputEmail(params) {
-    const [status, setStatus] = useState({ value: '', helperText: '' });
-    const fieldRef = useRef(null);
-    const handleTyping = (e) => {
-        e.target.value ?
-            e.target.value.match(/\b[\w.-]+@[\w.-]+\.\w{2,4}\b/gi) ?
-                setStatus({ value: e.target.value, helperText: '' }) :
-                setStatus({ value: e.target.value, helperText: 'Wrong format' }) :
-            setStatus(prev => ({ ...prev, value: e.target.value }))
-    }
-    return (
-        <TextField
-            label="Email"
-            required
-            {...status}
-            error={Boolean(status.helperText)}
-            inputRef={fieldRef}
-            onChange={handleTyping}
-            InputProps={{
-                endAdornment: status.helperText && <InputAdornment position='end'>
-                    <IconButton
-                        size='small'
-                        sx={{
-                            color: 'error.light'
-                        }}
-                        onClick={() => {
-                            fieldRef.current.focus();
-                            setStatus({ value: '', helperText: '' });
-                        }}
-                        edge="end"
-                    >
-                        <i className="far fa-times-circle"></i>
-                    </IconButton>
-                </InputAdornment>
-            }}
-            {...params}
-        />
-    );
+export function InputEmail({ selector, actionUpdate, ...params }) {
+	const { value, helperText } = useSelector(selector);
+	const dispatch = useDispatch();
+	const fieldRef = useRef(null);
+	function createPayload(value, helperText) {
+		return actionUpdate({
+			email: { value, helperText },
+		});
+	}
+	const handleTyped = (e) => {
+		e.target.value
+			? e.target.value.match(/\b[\w.-]+@[\w.-]+\.\w{2,4}\b/gi)
+				? dispatch(createPayload(e.target.value, ''))
+				: dispatch(createPayload(e.target.value, 'Wrong format'))
+			: dispatch(createPayload(e.target.value, helperText));
+	};
+	return (
+		<TextField
+			label='Email'
+			required
+			helperText={helperText}
+			error={Boolean(helperText)}
+			inputRef={fieldRef}
+			value={value}
+			onChange={handleTyped}
+			InputProps={{
+				endAdornment: helperText && (
+					<InputAdornment position='end'>
+						<IconButton
+							size='small'
+							sx={{
+								color: 'error.light',
+							}}
+							onClick={() => {
+								fieldRef.current.focus();
+								dispatch(createPayload('', ''));
+							}}
+							edge='end'
+						>
+							<i className='far fa-times-circle'></i>
+						</IconButton>
+					</InputAdornment>
+				),
+			}}
+			{...params}
+		/>
+	);
 }

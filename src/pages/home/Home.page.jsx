@@ -1,4 +1,4 @@
-import { Box, createTheme } from '@mui/material';
+import { createTheme } from '@mui/material';
 import React from 'react';
 import { Progress } from '../../components/progress/Progress.component';
 import { ScopedTheme } from '../../components/theme/ScopedTheme.component';
@@ -10,29 +10,24 @@ import Third from './Third.page';
 const dark = createTheme({ palette: { mode: 'dark' } });
 const light = createTheme({ palette: { mode: 'light' } });
 
-function Home({ drawerWidth }) {
-    return (
-        <Box
-            sx={{
-                ml: drawerWidth + "px",
-                transition: "all 0.2s",
-            }}
-        >
-            <Progress />
-            <ScopedTheme theme={dark}>
-                <First />
-            </ScopedTheme>
-            <ScopedTheme theme={light}>
-                <Second />
-            </ScopedTheme>
-            <ScopedTheme theme={light}>
-                <Third />
-            </ScopedTheme>
-            <ScopedTheme theme={dark}>
-                <Four />
-            </ScopedTheme>
-        </Box >
-    );
+function Home() {
+	return (
+		<>
+			<Progress />
+			<ScopedTheme theme={dark}>
+				<First />
+			</ScopedTheme>
+			<ScopedTheme theme={light}>
+				<Second />
+			</ScopedTheme>
+			<ScopedTheme theme={light}>
+				<Third />
+			</ScopedTheme>
+			<ScopedTheme theme={dark}>
+				<Four />
+			</ScopedTheme>
+		</>
+	);
 }
 
 export default Home;
