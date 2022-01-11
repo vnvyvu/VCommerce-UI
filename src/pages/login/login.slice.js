@@ -1,25 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { merge } from 'lodash';
+import { defaultReducers } from '../../redux/defaultReducers';
+
+const initialState = {
+	email: {
+		value: '',
+		helperText: '',
+	},
+	password: {
+		value: '',
+		helperText: '',
+	},
+	remember: {
+		value: false,
+	},
+};
 
 export const loginSlice = createSlice({
 	name: 'login',
-	initialState: {
-		email: {
-			value: '',
-			helperText: '',
-		},
-		password: {
-			value: '',
-			helperText: '',
-		},
-		remember: {
-			value: false,
-		},
-	},
+	initialState,
 	reducers: {
-		update: (state, action) => {
-			state = merge(state, action.payload);
-		},
+		...defaultReducers(initialState),
 	},
 });
 

@@ -3,8 +3,7 @@ import { userReducer } from '../features/user/user.slice';
 import { usersReducer } from '../features/users/users.slice';
 import { loginReducer } from '../pages/login/login.slice';
 import { registerReducer } from '../pages/register/register.slice';
-import { localStorageStateMiddleware } from './middleware/localStorageState.middleware';
-import { refreshTokenMiddleware } from './middleware/refreshToken.middleware';
+import { localStateMiddleware } from './middleware/localState.middleware';
 
 export default configureStore({
 	reducer: {
@@ -14,8 +13,5 @@ export default configureStore({
 		users: usersReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat([
-			localStorageStateMiddleware,
-			refreshTokenMiddleware,
-		]),
+		getDefaultMiddleware().concat([localStateMiddleware]),
 });

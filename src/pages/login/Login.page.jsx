@@ -27,6 +27,14 @@ import {
 import { loginActions } from './login.slice';
 
 function Login() {
+	/**
+	 * Xóa bỏ state cũ (có thể chứa thông tin đăng nhập trước đó)
+	 * khi người dùng truy cập lại trang Login
+	 */
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(loginActions.reset());
+	}, [dispatch]);
 	return (
 		<FrameMotionBox
 			sx={{
@@ -147,13 +155,18 @@ function ButtonLogin() {
 	};
 	const { state, ...location } = useLocation();
 	const navigate = useNavigate();
+	/**
+	 * Sau khi login thì người dùng sẽ được chuyển hướng về trang trước đó
+	 * mà họ truy cập (bằng cách truyền state từ trang trước đó về trang này).
+	 * Nếu không tồn tại trang trước đó thì chuyển hướng về trang chủ
+	 */
 	useEffect(() => {
 		if (expiresIn > Date.now()) {
 			state && state.from
 				? navigate(state.from, { state: { from: location } })
 				: navigate('../home');
 		}
-	}, [navigate, state, location, expiresIn]);
+	}, [navigate, state, location, expiresIn, dispatch]);
 	return (
 		<>
 			<LoadingButton
