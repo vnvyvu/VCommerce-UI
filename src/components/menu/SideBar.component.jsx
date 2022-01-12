@@ -1,4 +1,5 @@
 import {
+	Collapse,
 	Drawer as MuiDrawer,
 	drawerClasses,
 	IconButton,
@@ -16,9 +17,12 @@ import {
 	motion,
 	useAnimation,
 } from 'framer-motion';
-import { memo, useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, Outlet } from 'react-router-dom';
+import { idSelector, userSelector } from '../../features/user/user.selector';
 import { MotionBox, MotionList } from '../motion/Motion.component';
+import { items, userItems } from './menuItems';
 
 const Tooltip = styled(
 	({ className, ...props }) => (
@@ -34,7 +38,7 @@ const Tooltip = styled(
 	},
 }));
 
-function SideMenuTop({ src, open, ...params }) {
+function SideBarTop({ src, open, ...params }) {
 	return (
 		<AnimatePresence
 			style={{
@@ -60,7 +64,14 @@ function SideMenuTop({ src, open, ...params }) {
 	);
 }
 
-function SideMenuItems({ open, items }) {
+function SideBarItems({ open }) {
+	const data = useSelector(userSelector);
+	/*const user = JSON.parse(localStorage.getItem('user'));
+	const data = {
+		_id: localStorage.getItem('_id'),
+		name: user?.name,
+		avatar: user?.avatar,
+	};*/
 	return (
 		<MotionList
 			layout
@@ -71,43 +82,112 @@ function SideMenuItems({ open, items }) {
 				flexFlow: 'column',
 			}}
 		>
-			{items.map(({ icon, text, sx, key, to }) => (
-				<Tooltip title={text} placement='right' arrow key={key}>
-					<ListItem
-						disablePadding
-						sx={{ width: 1, height: '3rem', ...sx }}
-					>
-						<ListItemButton
-							disableGutters
-							component={Link}
-							sx={open ? {} : { justifyContent: 'center' }}
-							to={to}
-						>
-							<ListItemIcon
-								sx={{
-									justifyContent: 'center',
-									fontSize: '1.1rem',
-								}}
-							>
-								{icon}
-							</ListItemIcon>
-							{open && (
-								<ListItemText
-									disableTypography
-									sx={{ lineHeight: 'normal' }}
-								>
-									{text}
-								</ListItemText>
-							)}
-						</ListItemButton>
-					</ListItem>
-				</Tooltip>
-			))}
+			{items(data._id, data).map(({ key, isUserItem, ...props }) =>
+				isUserItem ? (
+					<SideBarUserItem key={key} {...props} open={open} />
+				) : (
+					<SideBarItem key={key} {...props} open={open} />
+				)
+			)}
 		</MotionList>
 	);
 }
 
-function SideMenuController({ open, onClick, ...params }) {
+function SideBarItem({ icon, text, sx, to, open }) {
+	return (
+		<>
+			<Tooltip title={text} placement='right' arrow>
+				<ListItem
+					disablePadding
+					sx={{ width: 1, height: '3rem', ...sx }}
+				>
+					<ListItemButton
+						disableGutters
+						component={to ? Link : 'div'}
+						sx={open ? {} : { justifyContent: 'center' }}
+						to={to}
+					>
+						<ListItemIcon
+							sx={{
+								justifyContent: 'center',
+								fontSize: '1.1em',
+							}}
+						>
+							{icon}
+						</ListItemIcon>
+						{open && (
+							<ListItemText
+								disableTypography
+								sx={{ lineHeight: 'normal' }}
+							>
+								{text}
+							</ListItemText>
+						)}
+					</ListItemButton>
+				</ListItem>
+			</Tooltip>
+		</>
+	);
+}
+
+function SideBarUserItem({ icon, text, sx, to, open }) {
+	const [expand, setExpand] = useState(false);
+	const _id = useSelector(idSelector);
+	function handleClick(e) {
+		setExpand((prev) => !prev);
+	}
+	return (
+		<>
+			<Tooltip title={text} placement='right' arrow>
+				<ListItem
+					disablePadding
+					sx={{ width: 1, height: '3rem', ...sx }}
+				>
+					<ListItemButton
+						disableGutters
+						component='div'
+						onClick={handleClick}
+						sx={open ? {} : { justifyContent: 'center' }}
+					>
+						<ListItemIcon
+							sx={{
+								justifyContent: 'center',
+								fontSize: '1.1rem',
+							}}
+						>
+							{icon}
+						</ListItemIcon>
+						{open && (
+							<ListItemText
+								disableTypography
+								sx={{ lineHeight: 'normal' }}
+							>
+								{text}
+							</ListItemText>
+						)}
+						{open && (
+							<i
+								className={
+									'fal fa-angle-' + (expand ? 'down' : 'up')
+								}
+								style={{
+									marginRight: '0.75rem',
+								}}
+							></i>
+						)}
+					</ListItemButton>
+				</ListItem>
+			</Tooltip>
+			<Collapse in={expand} timeout='auto' unmountOnExit>
+				{userItems(_id).map(({ key, ...props }) => (
+					<SideBarItem key={key} {...props} open={open} />
+				))}
+			</Collapse>
+		</>
+	);
+}
+
+function SideBarController({ open, onClick, ...params }) {
 	return (
 		<IconButton
 			onClick={onClick}
@@ -155,7 +235,7 @@ const Drawer = styled(MuiDrawer, {
 		  }
 );
 
-export const SideMenu = memo(({ items }) => {
+export const SideBar = () => {
 	const [open, setOpen] = useState(
 		JSON.parse(localStorage.getItem('drawer')) || false
 	);
@@ -182,16 +262,16 @@ export const SideMenu = memo(({ items }) => {
 						},
 					}}
 				>
-					<SideMenuTop
+					<SideBarTop
 						src={
 							process.env.PUBLIC_URL +
 							(open ? '/logo.png' : '/favicon.png')
 						}
 						open={open}
 					/>
-					<SideMenuItems items={items} open={open} />
+					<SideBarItems open={open} />
 
-					<SideMenuController
+					<SideBarController
 						onClick={handleControlDrawer}
 						open={open}
 					/>
@@ -206,4 +286,4 @@ export const SideMenu = memo(({ items }) => {
 			</motion.div>
 		</AnimateSharedLayout>
 	);
-});
+};

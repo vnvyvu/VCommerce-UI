@@ -1,15 +1,19 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { isUserAuthenticated } from '../../redux/middleware/localState.middleware';
 
 export function Auth({ requireUnauth }) {
-	const location = useLocation();
+	const { state, ...location } = useLocation();
 	if (requireUnauth)
-		return localStorage.getItem('expiresIn') ? (
-			<Navigate to='home' />
+		return isUserAuthenticated() ? (
+			<Navigate
+				to={state ? state.from || 'home' : 'home'}
+				state={{ from: location }}
+			/>
 		) : (
 			<Outlet />
 		);
 	//if expiresIn is exist then user was authenticated else navigte to login page
-	return localStorage.getItem('expiresIn') ? (
+	return isUserAuthenticated() ? (
 		<Outlet />
 	) : (
 		<Navigate to='login' state={{ from: location }} />

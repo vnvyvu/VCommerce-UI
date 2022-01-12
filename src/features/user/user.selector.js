@@ -16,3 +16,5 @@ export const registerStatusSelector = createSelector(
 	userSelector,
 	({ registerStatus, errorMsg }) => ({ registerStatus, errorMsg })
 );
+
+export const idSelector = createSelector(userSelector, ({ _id }) => _id);

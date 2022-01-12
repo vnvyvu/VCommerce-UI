@@ -6,7 +6,7 @@ import {
 	FormControlLabel,
 	Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { InputEmail } from '../../components/input/InputEmail.component';
 import { InputName } from '../../components/input/InputName.component';
@@ -133,6 +133,10 @@ function Top({ drawerOpen, onAgreeTerms }) {
 }
 
 function Middle({ drawerOpen }) {
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(registerActions.reset());
+	}, [dispatch]);
 	return (
 		<FrameMotionBox
 			sx={{
